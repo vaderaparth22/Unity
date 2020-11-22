@@ -6,6 +6,8 @@ public class Enemy : MonoBehaviour
 {
     public float forceToPlayer;
     public float forceToRandom;
+    public float scaleIncreaseValue;
+    public Color[] hitColors;
 
     Rigidbody2D rb;
     Collider2D myCollider;
@@ -13,6 +15,7 @@ public class Enemy : MonoBehaviour
     SpriteRenderer spriteRenderer;
     bool isInsideWorld;
     bool isDanger;
+    int numOfHitsToPlayer;
 
     public void Initialize(bool isDanger)
     {
@@ -56,20 +59,57 @@ public class Enemy : MonoBehaviour
         spriteRenderer.sprite = sprite;
     }
 
+    public void SetSpriteColor(int index)
+    {
+        spriteRenderer.color = hitColors[index];
+    }
+
+    void IncreaseScaleAndDecreaseForce()
+    {
+        forceToPlayer--;
+        transform.localScale += new Vector3(scaleIncreaseValue, scaleIncreaseValue, 1);
+    }
+
+    void UpdateManagers(Vector2 pos)
+    {
+        MainFlow.Instance.PlayExplosionAt(pos);
+        MainFlow.Instance.soundManager.PlaySafeHitSound();
+        UIManager.Instance.UpdateTotalHits();
+        SpawnManager.Instance.RemoveEnemy(this);
+    }
+
+    void UpdateHitsToPlayer()
+    {
+        numOfHitsToPlayer++;
+        SetSpriteColor(numOfHitsToPlayer >= 3 ? 2 : numOfHitsToPlayer);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Collider2D otherCollider = collision.collider;
 
         if(otherCollider.CompareTag("Player"))
         {
-            MainFlow.Instance.PlayExplosionAt(collision.transform.position);
-            MainFlow.Instance.soundManager.PlaySafeHitSound();
-
-            SpawnManager.Instance.RemoveEnemy(this);
-
-            if(!isDanger)
+            if (!isDanger)
             {
+                UpdateManagers(collision.transform.position);
                 gameObject.SetActive(false);
+            }
+            else
+            {
+                IncreaseScaleAndDecreaseForce();
+                UpdateHitsToPlayer();
+
+                if(numOfHitsToPlayer >= 3)
+                {
+                    UpdateManagers(collision.transform.position);
+
+                    CameraShaker.Instance.ShakeCamera();
+                    MainFlow.Instance.PlayerDied();
+
+                    otherCollider.GetComponent<Ball>().BlastEffectToObject();
+                    otherCollider.gameObject.SetActive(false);
+                }
             }
         }
         else if (otherCollider.CompareTag("Danger") || otherCollider.CompareTag("Safe"))

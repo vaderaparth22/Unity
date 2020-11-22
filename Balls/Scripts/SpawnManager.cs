@@ -102,6 +102,7 @@ public class SpawnManager : MonoBehaviour
             {
                 e = GameObject.Instantiate<Enemy>(otherEnemies[EnemyType.Danger]);
                 e.Initialize(true);
+                e.SetSpriteColor(0);
                 dangerCount++;
             }
 

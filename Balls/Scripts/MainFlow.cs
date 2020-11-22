@@ -34,7 +34,6 @@ public class MainFlow : MonoBehaviour
     public GameObject menuBackgroundParticles;
 
     SpawnManager spawnManager;
-    UIManager uiManager;
     public SoundManager soundManager;
     
     public Ball playerBall { get; private set; }
@@ -54,7 +53,7 @@ public class MainFlow : MonoBehaviour
         SetGameWorld(true);
         EnableOrDisableParticles(true, false);
 
-        uiManager.UIVisibility(false);
+        UIManager.Instance.MenuVisibility(false);
         SetCursorMode(CursorLockMode.None, false);
 
         spawnManager.SpawnEnemiesOnStart();
@@ -71,10 +70,10 @@ public class MainFlow : MonoBehaviour
 
         spawnManager = GetComponent<SpawnManager>();
         spawnManager.LoadEnemies();
-        CameraShaker.Instance.Initialize();
         soundManager.Initialize();
-        uiManager = GetComponent<UIManager>();
-        uiManager.Initialize();
+
+        UIManager.Instance.Initialize();
+        CameraShaker.Instance.Initialize();
 
         EnableOrDisableParticles(false, true);
     }
@@ -92,7 +91,7 @@ public class MainFlow : MonoBehaviour
 
     void Update()
     {
-        uiManager.Refresh();
+        UIManager.Instance.Refresh();
         CameraShaker.Instance.Refresh();
 
         if (!isGameStarted) return;
@@ -129,6 +128,7 @@ public class MainFlow : MonoBehaviour
     IEnumerator RestartGame()
     {
         yield return new WaitForSecondsRealtime(restartAfter);
+        
         SceneManager.LoadScene(0);
     }
 

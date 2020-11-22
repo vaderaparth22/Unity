@@ -5,18 +5,53 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    #region SINGLETON
+    private static UIManager instance = null;
+    public static UIManager Instance
+    {
+        get { return instance; }
+    }
+    void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+    #endregion
+
     public Animation imageFadeAnimation;
+    public Text timeSurvivedText;
+    public Text totalObjectHits;
 
     GameObject mainMenuObject;
+    GameObject scoreTexts;
+
+    public static int numOfHits;
+    float startTime;
 
     public void Initialize()
     {
         mainMenuObject = GameObject.Find("MainMenu");
+        scoreTexts = GameObject.Find("ScoreTexts");
+        ScoreVisibility(false);
+
+        ResetNumberOfHits();
     }
 
-    public void UIVisibility(bool toShow)
+    public void MenuVisibility(bool toShow)
     {
         mainMenuObject.SetActive(toShow);
+    }
+
+    public void ScoreVisibility(bool toShow)
+    {
+        scoreTexts.SetActive(toShow);
     }
 
     public void PlayFadeAnimation(bool toFade)
@@ -35,6 +70,8 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitUntil(() => !imageFadeAnimation.isPlaying);
 
+        startTime = Time.time;
+        ScoreVisibility(true);
         StopFadeAnimation();
         MainFlow.Instance.InitializeReferences();
     }
@@ -42,6 +79,7 @@ public class UIManager : MonoBehaviour
     public void Refresh()
     {
         CheckInputForStart();
+        UpdateTimeSurvived();
     }
 
     void CheckInputForStart()
@@ -50,5 +88,37 @@ public class UIManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && !MainFlow.isGameStarted)
             StartCoroutine(CheckForAnimationFinishStart());
+    }
+
+    void UpdateTimeSurvived()
+    {
+        if (!MainFlow.isGameStarted) return;
+
+        timeSurvivedText.text = GetTimeSurvived();
+    }
+
+    string GetTimeSurvived()
+    {
+        float timePassed = Time.time - startTime;
+        float minutes = timePassed / 60;
+        float seconds = timePassed % 60;
+
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
+    public void UpdateTotalHits()
+    {
+        numOfHits++;
+        totalObjectHits.text = GetTotalHitsString();
+    }
+
+    string GetTotalHitsString()
+    {
+        return "TOTAL OBJECT HIT : " + numOfHits.ToString();
+    }
+
+    void ResetNumberOfHits()
+    {
+        numOfHits = 0;
     }
 }

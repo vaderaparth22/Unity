@@ -22,9 +22,11 @@ public class Ball : MonoBehaviour
     float powerCalculator;
     float squaredDistanceFromstartPos;
     bool canApplyForce;
+    int layerMask;
 
     public void Initialize()
     {
+        layerMask = LayerMask.GetMask("Enemy");
         line = GetComponent<LineRenderer>();
         rb = GetComponent<Rigidbody2D>();
         AddForceTowardsRandomTarget();
@@ -97,6 +99,19 @@ public class Ball : MonoBehaviour
         rb.AddForce((targetVector - (Vector2)transform.position).normalized * Random.Range(2f, 4f), ForceMode2D.Impulse);
     }
 
+    public void BlastEffectToObject()
+    {
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, 50f, layerMask);
+
+        foreach (Collider2D enemy in enemies)
+        {
+            float distanceFromEnemy = Vector2.Distance(transform.position, enemy.transform.position);
+            Vector2 direction = (enemy.transform.position - transform.position).normalized;
+            float force = Mathf.Lerp(15f, 0f, distanceFromEnemy/10f);
+            enemy.GetComponent<Rigidbody2D>().AddForce(direction * force, ForceMode2D.Impulse);
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (rb.velocity.sqrMagnitude < minWallHitPowerMagnitude)
@@ -116,13 +131,6 @@ public class Ball : MonoBehaviour
         else if (otherCollider.CompareTag("Wall"))
         {
             MainFlow.Instance.soundManager.PlayWallHitSound();
-        }
-        else if (otherCollider.CompareTag("Danger"))
-        {
-            CameraShaker.Instance.ShakeCamera();
-            MainFlow.Instance.PlayerDied();
-
-            gameObject.SetActive(false);
         }
     }
 }
