@@ -132,12 +132,20 @@ public class MainFlow : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
+    public void RestartFromUI()
+    {
+        isDead = true;
+        isGameStarted = false;
+        SetTimeScale(1);
+        SceneManager.LoadScene(0);
+    }
+
     public void SetTimeScale(float timeScaleValue)
     {
         Time.timeScale = timeScaleValue;
     }
 
-    void SetCursorMode(CursorLockMode lockMode, bool isvisible)
+    public void SetCursorMode(CursorLockMode lockMode, bool isvisible)
     {
         Cursor.lockState = lockMode;
         Cursor.visible = isvisible;

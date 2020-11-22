@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class UIManager : MonoBehaviour
 
     GameObject mainMenuObject;
     GameObject scoreTexts;
+    GameObject quitPanel;
 
     public static int numOfHits;
     float startTime;
@@ -39,7 +41,10 @@ public class UIManager : MonoBehaviour
     {
         mainMenuObject = GameObject.Find("MainMenu");
         scoreTexts = GameObject.Find("ScoreTexts");
+        quitPanel = GameObject.Find("QuitPanel");
+
         ScoreVisibility(false);
+        QuitPanelVisibility(false);
 
         ResetNumberOfHits();
     }
@@ -52,6 +57,11 @@ public class UIManager : MonoBehaviour
     public void ScoreVisibility(bool toShow)
     {
         scoreTexts.SetActive(toShow);
+    }
+
+    public void QuitPanelVisibility(bool toShow)
+    {
+        quitPanel.SetActive(toShow);
     }
 
     public void PlayFadeAnimation(bool toFade)
@@ -78,6 +88,7 @@ public class UIManager : MonoBehaviour
 
     public void Refresh()
     {
+        CheckForQuitInput();
         CheckInputForStart();
         UpdateTimeSurvived();
     }
@@ -120,5 +131,41 @@ public class UIManager : MonoBehaviour
     void ResetNumberOfHits()
     {
         numOfHits = 0;
+    }
+
+    void CheckForQuitInput()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape) && !MainFlow.isGameStarted)
+        {
+            Application.Quit();
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && MainFlow.isGameStarted)
+        {
+            PauseGame();
+        }
+    }
+
+    void PauseGame()
+    {
+        MainFlow.Instance.SetTimeScale(0);
+        MainFlow.Instance.SetCursorMode(CursorLockMode.None, true);
+        QuitPanelVisibility(true);
+    }
+
+    void UnPauseGame()
+    {
+        MainFlow.Instance.SetTimeScale(1);
+        QuitPanelVisibility(false);
+    }
+
+    public void QuitYes()
+    {
+        MainFlow.Instance.RestartFromUI();
+    }
+
+    public void QuitNo()
+    {
+        MainFlow.Instance.SetCursorMode(CursorLockMode.Locked, false);
+        UnPauseGame();
     }
 }
