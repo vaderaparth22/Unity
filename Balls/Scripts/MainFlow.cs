@@ -6,13 +6,22 @@ using UnityEngine.SceneManagement;
 public class MainFlow : MonoBehaviour
 {
     #region SINGLETON
-    public static MainFlow Instance = null;
-    private void Awake()
+    private static MainFlow instance = null;
+    public static MainFlow Instance
     {
-        if (Instance == null)
-            Instance = this;
-        else if (Instance != this)
-            Destroy(Instance);
+        get { return instance; }
+    }
+    void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
+        }
     }
     #endregion
 

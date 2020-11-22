@@ -5,13 +5,22 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     #region SINGLETON
-    public static SpawnManager Instance = null;
-    private void Awake()
+    private static SpawnManager instance = null;
+    public static SpawnManager Instance
     {
-        if (Instance == null)
-            Instance = this;
-        else if (Instance != this)
-            Destroy(Instance);
+        get { return instance; }
+    }
+    void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        else
+        {
+            instance = this;
+        }
     }
     #endregion
 
@@ -46,9 +55,7 @@ public class SpawnManager : MonoBehaviour
     void RefreshEnemies()
     {
         for (int i = 0; i < enemyBalls.Count; i++)
-        {
             enemyBalls[i].RefreshUpdate();
-        }
     }
 
     void RefreshEnemySpawning()

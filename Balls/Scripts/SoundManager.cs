@@ -19,22 +19,22 @@ public class SoundManager
 
     public void PlaySafeHitSound()
     {
-        soundEffectObject.PlayOneShot(safeHitSound);
+        soundEffectObject.PlayOneShot(safeHitSound, soundEffectObject.volume);
     }
 
     public void PlayWallHitSound()
     {
-        soundEffectObject.PlayOneShot(hitWallSounds[GetRandomInteger(0, hitWallSounds.Length-1)]);
+        soundEffectObject.PlayOneShot(hitWallSounds[GetRandomInteger(0, hitWallSounds.Length-1)], 0.8f);
     }
 
     public void PlayEnemiesHitSound()
     {
-        soundEffectObject.PlayOneShot(enemiesHitSound);
+        soundEffectObject.PlayOneShot(enemiesHitSound, soundEffectObject.volume);
     }
 
     public void PlayExplosionSound()
     {
-        soundEffectObject.PlayOneShot(playerExplodeSound);
+        soundEffectObject.PlayOneShot(playerExplodeSound, soundEffectObject.volume);
     }
 
     int GetRandomInteger(int from, int to)
