@@ -30,6 +30,11 @@ public class Ball : MonoBehaviour
         AddForceTowardsRandomTarget();
     }
 
+    public void ReInitialize()
+    {
+        AddForceTowardsRandomTarget();
+    }
+
     public void Refresh()
     {
         if (Input.GetMouseButtonDown(0))
@@ -94,7 +99,7 @@ public class Ball : MonoBehaviour
     {
         Vector2 targetVector = new Vector2(Random.Range(-MainFlow.Instance.worldWidth, MainFlow.Instance.worldWidth),
                         Random.Range(-MainFlow.Instance.worldHeight, MainFlow.Instance.worldHeight));
-        rb.AddForce((targetVector - (Vector2)transform.position).normalized * Random.Range(2f, 4f), ForceMode2D.Impulse);
+        rb.AddForce((targetVector - (Vector2)transform.position).normalized * Random.Range(1f, 3f), ForceMode2D.Impulse);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
