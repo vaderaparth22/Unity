@@ -42,7 +42,8 @@ public class MainFlow : MonoBehaviour
     public static bool isGameStarted;
 
     GameObject explosionPrefab;
-    
+    GameObject playerExplosionPrefab;
+
     private void Start()
     {
         LoadResources();
@@ -54,7 +55,7 @@ public class MainFlow : MonoBehaviour
         EnableOrDisableParticles(true, false);
 
         UIManager.Instance.MenuVisibility(false);
-        SetCursorMode(CursorLockMode.None, false);
+        SetCursorModeAndVisibility(CursorLockMode.None, false);
 
         spawnManager.SpawnEnemiesOnStart();
         playerBall = GameObject.FindObjectOfType<Ball>();
@@ -67,6 +68,7 @@ public class MainFlow : MonoBehaviour
     public void LoadResources()
     {
         explosionPrefab = Resources.Load<GameObject>("Prefabs/ExplosionEffect");
+        playerExplosionPrefab = Resources.Load<GameObject>("Prefabs/PlayerExplosionEffect");
 
         spawnManager = GetComponent<SpawnManager>();
         spawnManager.LoadEnemies();
@@ -145,7 +147,7 @@ public class MainFlow : MonoBehaviour
         Time.timeScale = timeScaleValue;
     }
 
-    public void SetCursorMode(CursorLockMode lockMode, bool isvisible)
+    public void SetCursorModeAndVisibility(CursorLockMode lockMode, bool isvisible)
     {
         Cursor.lockState = lockMode;
         Cursor.visible = isvisible;
@@ -154,6 +156,12 @@ public class MainFlow : MonoBehaviour
     public void PlayExplosionAt(Vector2 pos)
     {
         GameObject effect = Instantiate(explosionPrefab, pos, Quaternion.identity);
+        Destroy(effect, 2f);
+    }
+
+    public void PlayPlayerExplosionAt(Vector2 pos)
+    {
+        GameObject effect = Instantiate(playerExplosionPrefab, pos, Quaternion.identity);
         Destroy(effect, 2f);
     }
 

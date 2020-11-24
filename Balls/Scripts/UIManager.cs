@@ -114,7 +114,7 @@ public class UIManager : MonoBehaviour
         float minutes = timePassed / 60;
         float seconds = timePassed % 60;
 
-        return string.Format("{0:00}:{1:00}", minutes, seconds);
+        return Mathf.FloorToInt(minutes) + ":" + Mathf.FloorToInt(seconds);
     }
 
     public void UpdateTotalHits()
@@ -148,13 +148,14 @@ public class UIManager : MonoBehaviour
     void PauseGame()
     {
         MainFlow.Instance.SetTimeScale(0);
-        MainFlow.Instance.SetCursorMode(CursorLockMode.None, true);
+        MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.None, true);
         QuitPanelVisibility(true);
     }
 
     void UnPauseGame()
     {
         MainFlow.Instance.SetTimeScale(1);
+        MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.None, false);
         QuitPanelVisibility(false);
     }
 
@@ -165,7 +166,6 @@ public class UIManager : MonoBehaviour
 
     public void QuitNo()
     {
-        MainFlow.Instance.SetCursorMode(CursorLockMode.Locked, false);
         UnPauseGame();
     }
 }

@@ -36,18 +36,20 @@ public class Ball : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            line.enabled = true;
+            MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.None, false);
             startPoint = GetScreenToWorldPoint();
+            endPoint = GetScreenToWorldPoint();
             lastDistance = squaredDistanceFromstartPos;
+            line.enabled = true;
 
             MainFlow.Instance.SlowMotion(true);
         }
 
         if (Input.GetMouseButton(0))
         {
-            SetLineRendererAndForceValue();
             endPoint = GetScreenToWorldPoint();
             dir = (startPoint - endPoint);
+            SetLineRendererAndForceValue();
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -64,6 +66,7 @@ public class Ball : MonoBehaviour
             canApplyForce = false;
 
             MainFlow.Instance.SlowMotion(false);
+            MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.Locked, false);
         }
     }
 
@@ -99,7 +102,7 @@ public class Ball : MonoBehaviour
         rb.AddForce((targetVector - (Vector2)transform.position).normalized * Random.Range(2f, 4f), ForceMode2D.Impulse);
     }
 
-    public void BlastEffectToObject()
+    public void BlastShockwaveForce()
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, 50f, layerMask);
 

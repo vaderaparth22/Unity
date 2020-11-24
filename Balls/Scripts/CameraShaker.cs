@@ -18,6 +18,10 @@ public class CameraShaker : MonoBehaviour
 
     public float intensity;
     public float time;
+    public float onDeathIntensity;
+    public float onDeathTime;
+    public float dangerHitIntensity;
+    public float dangerHitTime;
 
     CinemachineVirtualCamera cinemachineVirtualCamera;
     CinemachineBasicMultiChannelPerlin basicPerlin;
@@ -37,6 +41,22 @@ public class CameraShaker : MonoBehaviour
         startingIntesity = intensity;
         shakerTimerTotal = time;
         shakerTime = time;
+    }
+
+    public void ShakeCameraOnPlayerDeath()
+    {
+        basicPerlin.m_AmplitudeGain = onDeathIntensity;
+        startingIntesity = onDeathIntensity;
+        shakerTimerTotal = onDeathTime;
+        shakerTime = onDeathTime;
+    }
+
+    public void ShakeCameraOnDangerTouch()
+    {
+        basicPerlin.m_AmplitudeGain = dangerHitIntensity;
+        startingIntesity = dangerHitIntensity;
+        shakerTimerTotal = dangerHitTime;
+        shakerTime = dangerHitTime;
     }
 
     public void Refresh()

@@ -66,13 +66,13 @@ public class Enemy : MonoBehaviour
 
     void IncreaseScaleAndDecreaseForce()
     {
-        forceToPlayer--;
         transform.localScale += new Vector3(scaleIncreaseValue, scaleIncreaseValue, 1);
     }
 
     void UpdateManagers(Vector2 pos)
     {
-        MainFlow.Instance.PlayExplosionAt(pos);
+        if(!isDanger) MainFlow.Instance.PlayExplosionAt(pos);
+
         MainFlow.Instance.soundManager.PlaySafeHitSound();
         UIManager.Instance.UpdateTotalHits();
         SpawnManager.Instance.RemoveEnemy(this);
@@ -92,22 +92,24 @@ public class Enemy : MonoBehaviour
         {
             if (!isDanger)
             {
-                UpdateManagers(collision.transform.position);
+                UpdateManagers(otherCollider.transform.position);
                 gameObject.SetActive(false);
             }
             else
             {
                 IncreaseScaleAndDecreaseForce();
                 UpdateHitsToPlayer();
+                CameraShaker.Instance.ShakeCameraOnDangerTouch();
 
-                if(numOfHitsToPlayer >= 3)
+                if (numOfHitsToPlayer >= 3)
                 {
                     UpdateManagers(collision.transform.position);
 
-                    CameraShaker.Instance.ShakeCamera();
+                    CameraShaker.Instance.ShakeCameraOnPlayerDeath();
                     MainFlow.Instance.PlayerDied();
+                    MainFlow.Instance.PlayPlayerExplosionAt(otherCollider.transform.position);
 
-                    otherCollider.GetComponent<Ball>().BlastEffectToObject();
+                    otherCollider.GetComponent<Ball>().BlastShockwaveForce();
                     otherCollider.gameObject.SetActive(false);
                 }
             }
