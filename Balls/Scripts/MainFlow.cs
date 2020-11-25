@@ -46,7 +46,9 @@ public class MainFlow : MonoBehaviour
 
     private void Start()
     {
+        isDead = false;
         LoadResources();
+        SetCursorModeAndVisibility(CursorLockMode.None, true);
     }
 
     public void InitializeReferences()
@@ -104,7 +106,7 @@ public class MainFlow : MonoBehaviour
 
     public void SlowMotion(bool activate)
     {
-        if (isDead) return;
+        if (!playerBall.gameObject.activeSelf) return;
 
         if(activate)
         {

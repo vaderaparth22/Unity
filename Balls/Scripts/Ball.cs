@@ -34,6 +34,8 @@ public class Ball : MonoBehaviour
 
     public void Refresh()
     {
+        if (UIManager.isPaused) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.None, false);

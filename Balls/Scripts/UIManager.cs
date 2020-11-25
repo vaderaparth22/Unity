@@ -33,18 +33,24 @@ public class UIManager : MonoBehaviour
     GameObject mainMenuObject;
     GameObject scoreTexts;
     GameObject quitPanel;
+    GameObject instructionPanel;
 
     public static int numOfHits;
+    public static bool isPaused;
     float startTime;
 
     public void Initialize()
     {
+        isPaused = false;
+
         mainMenuObject = GameObject.Find("MainMenu");
         scoreTexts = GameObject.Find("ScoreTexts");
         quitPanel = GameObject.Find("QuitPanel");
+        instructionPanel = GameObject.Find("InstructionsPanel");
 
         ScoreVisibility(false);
         QuitPanelVisibility(false);
+        InstructionVisibility(false);
 
         ResetNumberOfHits();
     }
@@ -62,6 +68,11 @@ public class UIManager : MonoBehaviour
     public void QuitPanelVisibility(bool toShow)
     {
         quitPanel.SetActive(toShow);
+    }
+
+    public void InstructionVisibility(bool toShow)
+    {
+        instructionPanel.SetActive(toShow);
     }
 
     public void PlayFadeAnimation(bool toFade)
@@ -135,7 +146,9 @@ public class UIManager : MonoBehaviour
 
     void CheckForQuitInput()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && !MainFlow.isGameStarted)
+        if (instructionPanel.activeSelf) return;
+
+        if(Input.GetKeyDown(KeyCode.Escape) && !MainFlow.isGameStarted && !MainFlow.isDead)
         {
             Application.Quit();
         }
@@ -147,6 +160,7 @@ public class UIManager : MonoBehaviour
 
     void PauseGame()
     {
+        isPaused = true;
         MainFlow.Instance.SetTimeScale(0);
         MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.None, true);
         QuitPanelVisibility(true);
@@ -154,6 +168,7 @@ public class UIManager : MonoBehaviour
 
     void UnPauseGame()
     {
+        isPaused = false;
         MainFlow.Instance.SetTimeScale(1);
         MainFlow.Instance.SetCursorModeAndVisibility(CursorLockMode.None, false);
         QuitPanelVisibility(false);
@@ -167,5 +182,17 @@ public class UIManager : MonoBehaviour
     public void QuitNo()
     {
         UnPauseGame();
+    }
+
+    public void HowToPlayOnClick()
+    {
+        MenuVisibility(false);
+        InstructionVisibility(true);
+    }
+
+    public void BackToMainScreen()
+    {
+        MenuVisibility(true);
+        InstructionVisibility(false);
     }
 }
